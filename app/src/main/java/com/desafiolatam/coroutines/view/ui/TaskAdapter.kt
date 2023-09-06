@@ -1,5 +1,6 @@
 package com.desafiolatam.coroutines.view.ui
 
+import android.graphics.Paint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -12,6 +13,9 @@ class TaskAdapter :
 
     private lateinit var binding: ItemTaskBinding
     lateinit var taskList: List<TaskEntity>
+
+    lateinit var onLongClickListener: ((TaskEntity) -> Unit)
+    lateinit var onCheckListener: ((TaskEntity, Boolean) -> Unit)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
         binding = ItemTaskBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -29,6 +33,23 @@ class TaskAdapter :
             binding.run {
                 tvTaskTitle.text = task.title
                 tvTaskDescription.text = task.description
+
+                clItem.setOnLongClickListener {
+                    onLongClickListener.invoke(task)
+                    false
+                }
+
+                cbIsCompleted.setOnCheckedChangeListener { _, checked ->
+                    onCheckListener.invoke( task, checked)
+                }
+
+                if(task.isCompleted){
+                    tvTaskTitle.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+                    cbIsCompleted.isChecked = true
+                }
+                else{
+                    cbIsCompleted.isChecked = false
+                }
             }
         }
     }

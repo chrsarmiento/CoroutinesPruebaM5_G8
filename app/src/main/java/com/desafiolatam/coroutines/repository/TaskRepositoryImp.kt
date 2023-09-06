@@ -16,7 +16,5 @@ class TaskRepositoryImp @Inject constructor(
 
     override suspend fun deleteTask(task: TaskEntity) = taskDao.deleteTask(task.id)
 
-    override suspend fun isTaskCompleted(task: TaskEntity, isCompleted: Boolean) {
-        TODO("Not yet implemented")
-    }
+    override suspend fun isTaskCompleted(task: TaskEntity, isCompleted: Boolean) = taskDao.taskCompleted(isCompleted, task.id)
 }

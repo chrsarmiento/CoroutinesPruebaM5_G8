@@ -1,5 +1,6 @@
 package com.desafiolatam.coroutines.view.ui
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -27,6 +28,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         getTaskList()
+
+        binding.fabAddTask.setOnClickListener {
+            startActivity(Intent(this,NewTaskActivity::class.java))
+        }
+
     }
 
     private fun getTaskList() {
@@ -42,5 +48,28 @@ class MainActivity : AppCompatActivity() {
         adapter.taskList = taskList
         binding.rvTask.layoutManager = LinearLayoutManager(this)
         binding.rvTask.adapter = adapter
+        adapter.onLongClickListener = {
+            deleteTask(it)
+        }
+        adapter.onCheckListener = {
+            task, isCompleted -> taskCompleted(task,isCompleted)
+        }
     }
+
+    private fun deleteTask(task: TaskEntity){
+        lifecycleScope.launchWhenCreated {
+            viewModel.deleteTask(task)
+        }
+    }
+
+    private fun taskCompleted(task: TaskEntity, isCompleted: Boolean){
+        lifecycleScope.launchWhenCreated {
+            viewModel.markTaskCompleted(task,isCompleted)
+        }
+    }
+
+
+
+
+
 }
